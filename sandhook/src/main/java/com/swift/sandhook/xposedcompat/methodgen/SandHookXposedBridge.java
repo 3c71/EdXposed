@@ -17,23 +17,23 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.robv.android.xposed.XposedBridge;
 
 public final class SandHookXposedBridge {
 
-    private static final HashMap<Member, Method> hookedInfo = new HashMap<>();
-    private static HookMaker hookMaker = XposedCompat.useNewDexMaker ? new HookerDexMakerNew() : new HookerDexMaker();
+    private static final Map<Member, Method> hookedInfo = new ConcurrentHashMap<>();
+    private static HookMaker hookMaker = XposedCompat.useNewCallBackup ? new HookerDexMakerNew() : new HookerDexMaker();
     private static final AtomicBoolean dexPathInited = new AtomicBoolean(false);
     private static File dexDir;
 
-    public static Map<Member,HookMethodEntity> entityMap = new HashMap<>();
+    public static Map<Member,HookMethodEntity> entityMap = new ConcurrentHashMap<>();
 
-    public static void onForkPost() {
-        dexPathInited.set(false);
+    public static boolean hooked(Member member) {
+        return hookedInfo.containsKey(member) || entityMap.containsKey(member);
     }
 
     public static synchronized void hookMethod(Member hookMethod, XposedBridge.AdditionalHookInfo additionalHookInfo) {
@@ -50,15 +50,15 @@ public final class SandHookXposedBridge {
         try {
             if (dexPathInited.compareAndSet(false, true)) {
                 try {
-                    String fixedAppDataDir = XposedCompat.cacheDir.getAbsolutePath();
-                    dexDir = new File(fixedAppDataDir, "/sandxposed/");
+                    String fixedAppDataDir = XposedCompat.getCacheDir().getAbsolutePath();
+                    dexDir = new File(fixedAppDataDir, "/hookers/");
                     if (!dexDir.exists())
                         dexDir.mkdirs();
                 } catch (Throwable throwable) {
                     DexLog.e("error when init dex path", throwable);
                 }
             }
-            Trace.beginSection("SandHook-Xposed");
+            Trace.beginSection("SandXposed");
             long timeStart = System.currentTimeMillis();
             HookMethodEntity stub = null;
             if (XposedCompat.useInternalStub) {
@@ -69,7 +69,7 @@ public final class SandHookXposedBridge {
                 entityMap.put(hookMethod, stub);
             } else {
                 hookMaker.start(hookMethod, additionalHookInfo,
-                        XposedCompat.classLoader, dexDir == null ? null : dexDir.getAbsolutePath());
+                        hookMethod.getDeclaringClass().getClassLoader(), dexDir == null ? null : dexDir.getAbsolutePath());
                 hookedInfo.put(hookMethod, hookMaker.getCallBackupMethod());
             }
             DexLog.d("hook method <" + hookMethod.toString() + "> cost " + (System.currentTimeMillis() - timeStart) + " ms, by " + (stub != null ? "internal stub." : "dex maker"));
@@ -80,8 +80,8 @@ public final class SandHookXposedBridge {
     }
 
     public static void clearOatFile() {
-        String fixedAppDataDir = XposedCompat.cacheDir.getAbsolutePath();
-        File dexOatDir = new File(fixedAppDataDir, "/sandxposed/oat/");
+        String fixedAppDataDir = XposedCompat.getCacheDir().getAbsolutePath();
+        File dexOatDir = new File(fixedAppDataDir, "/hookers/oat/");
         if (!dexOatDir.exists())
             return;
         try {
@@ -136,12 +136,13 @@ public final class SandHookXposedBridge {
         }
     }
 
-    public static void setLibPath() {
+    public static void init() {
         if (Process.is64Bit()) {
             SandHookConfig.libSandHookPath = "/system/lib64/libsandhook.edxp.so";
         } else {
             SandHookConfig.libSandHookPath = "/system/lib/libsandhook.edxp.so";
         }
+        SandHookConfig.DEBUG = true;
     }
 }
 

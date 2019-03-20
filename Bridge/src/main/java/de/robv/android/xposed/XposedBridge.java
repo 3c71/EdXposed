@@ -7,7 +7,9 @@ import com.elderdrivers.riru.xposed.Main;
 import com.elderdrivers.riru.xposed.core.HookMain;
 import com.elderdrivers.riru.xposed.dexmaker.DynamicBridge;
 import com.elderdrivers.riru.xposed.dexmaker.MethodInfo;
+import com.elderdrivers.riru.xposed.entry.Router;
 import com.swift.sandhook.xposedcompat.XposedCompat;
+import com.swift.sandhook.xposedcompat.methodgen.SandHookXposedBridge;
 
 import java.io.File;
 import java.io.IOException;
@@ -401,6 +403,11 @@ public final class XposedBridge {
 	 */
 	private synchronized static void hookMethodNative(final Member method, Class<?> declaringClass,
                                                       int slot, final Object additionalInfoObj) {
+
+
+		if (SandHookXposedBridge.hooked(method) || DynamicBridge.hooked(method))
+			return;
+
 		if (Main.useSandHook) {
 			XposedCompat.hookMethod(method, (AdditionalHookInfo) additionalInfoObj);
 		} else {

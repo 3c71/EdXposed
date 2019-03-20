@@ -4,6 +4,7 @@ import com.elderdrivers.riru.xposed.Main;
 import com.elderdrivers.riru.xposed.config.ConfigManager;
 import com.elderdrivers.riru.xposed.entry.Router;
 import com.elderdrivers.riru.xposed.util.PrebuiltMethodsDeopter;
+import com.swift.sandhook.xposedcompat.XposedCompat;
 
 import static com.elderdrivers.riru.xposed.Main.isAppNeedHook;
 import static com.elderdrivers.riru.xposed.util.FileUtils.getDataPathPrefix;
@@ -66,7 +67,7 @@ public class BlackWhiteListProxy {
         final boolean isDynamicModulesMode = Main.isDynamicModulesEnabled();
         // set common flags
         ConfigManager.setDynamicModulesMode(isDynamicModulesMode);
-        Main.appDataDir = appDataDir;
+        Main.setAppDataDir(appDataDir);
         Router.onEnterChildProcess();
 
         if (!isDynamicModulesMode) {

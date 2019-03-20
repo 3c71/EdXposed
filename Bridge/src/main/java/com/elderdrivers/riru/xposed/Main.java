@@ -9,6 +9,7 @@ import com.elderdrivers.riru.xposed.core.HookMethodResolver;
 import com.elderdrivers.riru.xposed.proxy.yahfa.BlackWhiteListProxy;
 import com.elderdrivers.riru.xposed.proxy.yahfa.NormalProxy;
 import com.elderdrivers.riru.xposed.util.Utils;
+import com.swift.sandhook.xposedcompat.XposedCompat;
 import com.swift.sandhook.xposedcompat.methodgen.SandHookXposedBridge;
 
 import java.lang.reflect.Method;
@@ -20,6 +21,12 @@ public class Main implements KeepAll {
     public volatile static boolean useSandHook = true;
 
     public static String appDataDir = "";
+
+    public static void setAppDataDir(String appDataDir) {
+        Main.appDataDir = appDataDir;
+        XposedCompat.appDataDir = appDataDir;
+    }
+
     public static String appProcessName = "";
     private static String forkAndSpecializePramsStr = "";
     private static String forkSystemServerPramsStr = "";
@@ -27,7 +34,7 @@ public class Main implements KeepAll {
     static {
         init(Build.VERSION.SDK_INT);
         HookMethodResolver.init();
-        SandHookXposedBridge.setLibPath();
+        SandHookXposedBridge.init();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

@@ -9,7 +9,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.robv.android.xposed.XposedBridge;
@@ -21,7 +22,7 @@ import static com.elderdrivers.riru.xposed.util.ProcessUtils.getCurrentProcessNa
 
 public final class DynamicBridge {
 
-    private static final HashMap<Member, Method> hookedInfo = new HashMap<>();
+    private static final Map<Member, Method> hookedInfo = new ConcurrentHashMap<>();
     private static final HookerDexMaker dexMaker = new HookerDexMaker();
     private static final AtomicBoolean dexPathInited = new AtomicBoolean(false);
     private static File dexDir;
@@ -33,6 +34,10 @@ public final class DynamicBridge {
      */
     public static void onForkPost() {
         dexPathInited.set(false);
+    }
+
+    public static boolean hooked(Member member) {
+        return hookedInfo.containsKey(member);
     }
 
     public static synchronized void hookMethod(Member hookMethod, XposedBridge.AdditionalHookInfo additionalHookInfo) {

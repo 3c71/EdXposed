@@ -15,7 +15,7 @@ public class NormalProxy {
                                             boolean startChildZygote, String instructionSet,
                                             String appDataDir) {
         final boolean isDynamicModulesMode = Main.isDynamicModulesEnabled();
-        Main.appDataDir = appDataDir;
+        Main.setAppDataDir(appDataDir);
         ConfigManager.setDynamicModulesMode(isDynamicModulesMode);
         PrebuiltMethodsDeopter.deoptBootMethods(); // do it once for secondary zygote
         // call this to ensure the flag is set to false ASAP
@@ -38,7 +38,7 @@ public class NormalProxy {
     public static void forkSystemServerPre(int uid, int gid, int[] gids, int debugFlags, int[][] rlimits,
                                            long permittedCapabilities, long effectiveCapabilities) {
         final boolean isDynamicModulesMode = Main.isDynamicModulesEnabled();
-        Main.appDataDir = getDataPathPrefix() + "android";
+        Main.setAppDataDir(getDataPathPrefix() + "android");
         ConfigManager.setDynamicModulesMode(isDynamicModulesMode);
         // set startsSystemServer flag used when loadModules
         Router.prepare(true);
