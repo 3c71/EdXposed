@@ -9,13 +9,13 @@ import com.elderdrivers.riru.xposed.entry.bootstrap.SysBootstrapHookInfo;
 import com.elderdrivers.riru.xposed.entry.bootstrap.SysInnerHookInfo;
 import com.elderdrivers.riru.xposed.entry.bootstrap.WorkAroundHookInfo;
 import com.elderdrivers.riru.xposed.entry.hooker.SystemMainHooker;
-import com.elderdrivers.riru.xposed.util.ProcessUtils;
 import com.elderdrivers.riru.xposed.util.Utils;
-import com.swift.sandhook.SandHook;
-import com.swift.sandhook.xposedcompat.XposedCompat;
+import com.swift.sandhook.SandHookConfig;
 
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedInit;
+
+import static de.robv.android.xposed.XposedInit.startsSystemServer;
 
 public class Router {
 
@@ -23,7 +23,7 @@ public class Router {
 
     public static void prepare(boolean isSystem) {
         // this flag is needed when loadModules
-        XposedInit.startsSystemServer = isSystem;
+        startsSystemServer = isSystem;
 //        InstallerChooser.setup();
     }
 
@@ -99,6 +99,6 @@ public class Router {
         forkCompleted = true;
         DynamicBridge.onForkPost();
         //enable compile in child process
-        //SandHook.enableCompiler(!XposedInit.startsSystemServer);
+        SandHookConfig.compiler = !startsSystemServer;
     }
 }

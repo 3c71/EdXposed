@@ -26,7 +26,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    api 'com.swift.sandhook:hooklib:3.1.9'
+    api 'com.swift.sandhook:hooklib:3.2.0'
     compileOnly project(':dexmaker')
     compileOnly project(':xposedapi')
 }

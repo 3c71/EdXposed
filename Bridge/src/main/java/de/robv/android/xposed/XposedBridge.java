@@ -408,7 +408,7 @@ public final class XposedBridge {
 		if (SandHookXposedBridge.hooked(method) || DynamicBridge.hooked(method))
 			return;
 
-		if (Main.useSandHook) {
+		if (Main.useSandHook && !XposedInit.startsSystemServer) {
 			XposedCompat.hookMethod(method, (AdditionalHookInfo) additionalInfoObj);
 		} else {
 			DynamicBridge.hookMethod(method, (AdditionalHookInfo) additionalInfoObj);

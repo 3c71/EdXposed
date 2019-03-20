@@ -33,9 +33,7 @@
 
 static const char* kPathPrefixWhitelist[] = {
         "/data/app/",
-        "/data/app-private/",
-        "/system/lib64/libsandhook.edxp.so",
-        "/system/lib/libsandhook.edxp.so"
+        "/data/app-private/"
 };
 
 static const char* kFdPath = "/proc/self/fd";
