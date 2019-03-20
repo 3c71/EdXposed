@@ -13,4 +13,11 @@ public class SysBootstrapHookInfo implements KeepMembers {
             LoadedApkConstructorHooker.class.getName(),
             OnePlusWorkAroundHooker.class.getName()
     };
+
+    public static Class[] hookItems = {
+            HandleBindAppHooker.class,
+            SystemMainHooker.class,
+            LoadedApkConstructorHooker.class
+    };
+
 }

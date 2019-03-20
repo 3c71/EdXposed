@@ -2,7 +2,15 @@ package com.elderdrivers.riru.xposed.entry.hooker;
 
 import com.elderdrivers.riru.common.KeepMembers;
 import com.elderdrivers.riru.xposed.entry.Router;
+import com.swift.sandhook.SandHook;
+import com.swift.sandhook.annotation.HookClass;
+import com.swift.sandhook.annotation.HookMethod;
+import com.swift.sandhook.annotation.HookMethodBackup;
+import com.swift.sandhook.annotation.SkipParamCheck;
 
+import java.lang.reflect.Method;
+
+import dalvik.system.BaseDexClassLoader;
 import de.robv.android.xposed.XposedBridge;
 
 import static de.robv.android.xposed.XposedInit.logD;
@@ -22,12 +30,19 @@ import static de.robv.android.xposed.XposedInit.logD;
  * open of /dev/binder and we haven't found side effects yet.
  * Other roms might share the same problems but not reported too.
  */
+
+@HookClass(BaseDexClassLoader.class)
 public class OnePlusWorkAroundHooker implements KeepMembers {
 
     public static String className = "dalvik.system.BaseDexClassLoader";
     public static String methodName = "inCompatConfigList";
     public static String methodSig = "(ILjava/lang/String;)Z";
 
+    @HookMethodBackup("inCompatConfigList")
+    @SkipParamCheck
+    static Method backup;
+
+    @HookMethod("inCompatConfigList")
     public static boolean hook(int type, String packageName) {
         if (XposedBridge.disableHooks || Router.forkCompleted) {
             return backup(type, packageName);

@@ -9,6 +9,16 @@ import android.content.res.CompatibilityInfo;
 import com.elderdrivers.riru.common.KeepMembers;
 import com.elderdrivers.riru.xposed.Main;
 import com.elderdrivers.riru.xposed.util.Utils;
+import com.swift.sandhook.SandHook;
+import com.swift.sandhook.annotation.HookClass;
+import com.swift.sandhook.annotation.HookMethod;
+import com.swift.sandhook.annotation.HookMethodBackup;
+import com.swift.sandhook.annotation.HookMode;
+import com.swift.sandhook.annotation.Param;
+import com.swift.sandhook.annotation.SkipParamCheck;
+import com.swift.sandhook.annotation.ThisObject;
+
+import java.lang.reflect.Method;
 
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -23,13 +33,20 @@ import static de.robv.android.xposed.XposedInit.logD;
 import static de.robv.android.xposed.XposedInit.logE;
 
 // normal process initialization (for new Activity, Service, BroadcastReceiver etc.)
+@HookClass(ActivityThread.class)
 public class HandleBindAppHooker implements KeepMembers {
 
     public static String className = "android.app.ActivityThread";
     public static String methodName = "handleBindApplication";
     public static String methodSig = "(Landroid/app/ActivityThread$AppBindData;)V";
 
-    public static void hook(Object thiz, Object bindData) {
+    @HookMethodBackup("handleBindApplication")
+    @SkipParamCheck
+    static Method backup;
+
+    @HookMethod("handleBindApplication")
+    @HookMode(HookMode.REPLACE)
+    public static void hook(@ThisObject ActivityThread thiz, @Param("android.app.ActivityThread$AppBindData") Object bindData) throws Throwable {
         if (XposedBlackListHooker.shouldDisableHooks("")) {
             backup(thiz, bindData);
             return;
@@ -88,4 +105,5 @@ public class HandleBindAppHooker implements KeepMembers {
 
     public static void backup(Object thiz, Object bindData) {
     }
+
 }

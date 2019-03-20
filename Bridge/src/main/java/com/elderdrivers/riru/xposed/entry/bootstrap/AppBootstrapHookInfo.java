@@ -11,4 +11,10 @@ public class AppBootstrapHookInfo implements KeepMembers {
             LoadedApkConstructorHooker.class.getName(),
             OnePlusWorkAroundHooker.class.getName()
     };
+
+    public static Class[] hookItems = {
+            HandleBindAppHooker.class,
+            LoadedApkConstructorHooker.class
+    };
+
 }

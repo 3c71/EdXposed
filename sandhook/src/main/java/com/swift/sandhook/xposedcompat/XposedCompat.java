@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Process;
 import android.text.TextUtils;
 
+import com.swift.sandhook.SandHook;
 import com.swift.sandhook.xposedcompat.classloaders.ComposeClassLoader;
 import com.swift.sandhook.xposedcompat.methodgen.SandHookXposedBridge;
 import com.swift.sandhook.xposedcompat.utils.ApplicationUtils;
@@ -32,6 +33,16 @@ public class XposedCompat {
     public static volatile boolean retryWhenCallOriginError = false;
 
     private static ClassLoader sandHookXposedClassLoader;
+
+    public static void addHookers(ClassLoader classLoader, Class[] hookers) {
+        if (hookers == null)
+            return;
+        for (Class hooker:hookers) {
+            try {
+                SandHook.addHookClass(classLoader, hooker);
+            } catch (Throwable throwable) {}
+        }
+    }
 
     public static File getCacheDir() {
         if (cacheDir == null) {

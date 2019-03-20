@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.internal.os.ZygoteInit;
-import com.elderdrivers.riru.xposed.BuildConfig;
 import com.elderdrivers.riru.xposed.config.ConfigManager;
 import com.elderdrivers.riru.xposed.entry.Router;
 import com.elderdrivers.riru.xposed.util.Utils;
