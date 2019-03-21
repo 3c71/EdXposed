@@ -152,6 +152,22 @@ void loadDexAndInit(JNIEnv *env, const char *dexPath) {
     } else {
         LOGE("HookEntry class is null. %d", getpid());
     }
+
+    //load lib sandhook
+    void* lib_sandhook;
+    if (sizeof(void*) == 8) {
+        lib_sandhook = dlopen("/system/lib64/libsandhook.edxp.so", RTLD_NOW);
+    } else {
+        lib_sandhook = dlopen("/system/lib/libsandhook.edxp.so", RTLD_NOW);
+    }
+    bool* (*jni_load)(JNIEnv*, jclass, jclass) = reinterpret_cast<bool *(*)(JNIEnv *, jclass,
+                                                                       jclass)>(dlsym(lib_sandhook, "JNI_Load_Ex"));
+
+    jclass sandhook_class = findClassFromLoader(env, myClassLoader, CLASS_SAND_HOOK);
+    jclass nevercall_class = findClassFromLoader(env, myClassLoader, CLASS_NEVER_CALL);
+    if (!jni_load(env, sandhook_class, nevercall_class)) {
+        LOGE("HookEntry class error. %d", getpid());
+    }
 }
 
 jstring getThrowableMessage(JNIEnv *env, jobject throwable) {

@@ -142,6 +142,12 @@ public final class SandHookXposedBridge {
         } else {
             SandHookConfig.libSandHookPath = "/system/lib/libsandhook.edxp.so";
         }
+        SandHookConfig.libLoader = new SandHookConfig.LibLoader() {
+            @Override
+            public void loadLib() {
+                //do it in loadDexAndInit
+            }
+        };
         SandHookConfig.DEBUG = true;
         //in zygote disable compile
         SandHookConfig.compiler = false;
