@@ -429,7 +429,16 @@ public final class XposedBridge {
                                                      Class<?> returnType,
                                                      Object thisObject, Object[] args)
             throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        return DynamicBridge.invokeOriginalMethod(method, thisObject, args);
+
+	    if (SandHookXposedBridge.hooked(method)) {
+	        try {
+                return SandHookXposedBridge.invokeOriginalMethod(method, thisObject, args);
+            } catch (Throwable throwable) {
+	            throw new InvocationTargetException(throwable);
+            }
+        } else {
+            return DynamicBridge.invokeOriginalMethod(method, thisObject, args);
+        }
     }
 
 	/**
