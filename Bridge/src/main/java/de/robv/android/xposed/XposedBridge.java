@@ -408,6 +408,11 @@ public final class XposedBridge {
 		if (SandHookXposedBridge.hooked(method) || DynamicBridge.hooked(method))
 			return;
 
+		if (method.getDeclaringClass() == Log.class) {
+		    Log.e("hookMethodNative", "some on hook log!");
+            return;
+        }
+
 		if (Main.useSandHook && !XposedInit.startsSystemServer) {
 			XposedCompat.hookMethod(method, (AdditionalHookInfo) additionalInfoObj);
 		} else {
