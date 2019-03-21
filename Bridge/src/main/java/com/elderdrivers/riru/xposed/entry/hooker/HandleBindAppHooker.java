@@ -45,10 +45,9 @@ public class HandleBindAppHooker implements KeepMembers {
     static Method backup;
 
     @HookMethod("handleBindApplication")
-    @HookMode(HookMode.REPLACE)
     public static void hook(@ThisObject ActivityThread thiz, @Param("android.app.ActivityThread$AppBindData") Object bindData) throws Throwable {
         if (XposedBlackListHooker.shouldDisableHooks("")) {
-            backup(thiz, bindData);
+            SandHook.callOriginByBackup(backup, thiz, bindData);
             return;
         }
         try {
@@ -99,7 +98,7 @@ public class HandleBindAppHooker implements KeepMembers {
         } catch (Throwable t) {
             logE("error when hooking bindApp", t);
         } finally {
-            backup(thiz, bindData);
+            SandHook.callOriginByBackup(backup, thiz, bindData);
         }
     }
 

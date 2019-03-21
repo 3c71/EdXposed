@@ -11,6 +11,7 @@ import com.elderdrivers.riru.xposed.entry.bootstrap.WorkAroundHookInfo;
 import com.elderdrivers.riru.xposed.entry.hooker.SystemMainHooker;
 import com.elderdrivers.riru.xposed.util.Utils;
 import com.swift.sandhook.SandHookConfig;
+import com.swift.sandhook.xposedcompat.XposedCompat;
 
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedInit;
@@ -70,22 +71,22 @@ public class Router {
                     Router.class.getClassLoader(),
                     classLoader,
                     SysBootstrapHookInfo.class.getName());
-            //XposedCompat.addHookers(classLoader, SysBootstrapHookInfo.hookItems);
+            XposedCompat.addHookers(classLoader, SysBootstrapHookInfo.hookItems);
         } else {
             HookMain.doHookDefault(
                     Router.class.getClassLoader(),
                     classLoader,
                     AppBootstrapHookInfo.class.getName());
-            //XposedCompat.addHookers(classLoader, AppBootstrapHookInfo.hookItems);
+            XposedCompat.addHookers(classLoader, AppBootstrapHookInfo.hookItems);
         }
     }
 
     public static void startSystemServerHook() {
-        HookMain.doHookDefault(
-                Router.class.getClassLoader(),
-                SystemMainHooker.systemServerCL,
-                SysInnerHookInfo.class.getName());
-//        XposedCompat.addHookers(SystemMainHooker.systemServerCL, SysInnerHookInfo.hookItems);
+//        HookMain.doHookDefault(
+//                Router.class.getClassLoader(),
+//                SystemMainHooker.systemServerCL,
+//                SysInnerHookInfo.class.getName());
+        XposedCompat.addHookers(SystemMainHooker.systemServerCL, SysInnerHookInfo.hookItems);
     }
 
     public static void startWorkAroundHook() {

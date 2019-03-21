@@ -301,7 +301,6 @@ public class HookStubManager {
                     param.setResult(SandHook.callOriginMethod(originMethod, thiz, param.args));
                 }
             } catch (Throwable e) {
-                XposedBridge.log(e);
                 param.setThrowable(e);
             }
         }
@@ -372,7 +371,6 @@ public class HookStubManager {
             try {
                 param.setResult(SandHook.callOriginMethod(origin, thiz, param.args));
             } catch (Throwable e) {
-                XposedBridge.log(e);
                 param.setThrowable(e);
             }
         }

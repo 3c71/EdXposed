@@ -35,13 +35,12 @@ public class SystemMainHooker implements KeepMembers {
     static Method backup;
 
     @HookMethod("systemMain")
-    @HookMode(HookMode.REPLACE)
     public static ActivityThread hook() throws Throwable {
         if (XposedBridge.disableHooks) {
-            return backup();
+            return (ActivityThread) SandHook.callOriginByBackup(backup, null);
         }
         logD("ActivityThread#systemMain() starts");
-        ActivityThread activityThread = backup();
+        ActivityThread activityThread = (ActivityThread) SandHook.callOriginByBackup(backup, null);
         try {
             // get system_server classLoader
             systemServerCL = Thread.currentThread().getContextClassLoader();

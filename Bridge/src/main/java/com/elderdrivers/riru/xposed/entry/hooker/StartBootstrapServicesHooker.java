@@ -36,11 +36,10 @@ public class StartBootstrapServicesHooker implements KeepMembers {
     static Method backup;
 
     @HookMethod("startBootstrapServices")
-    @HookMode(HookMode.REPLACE)
-    public static void hook(@ThisObject Object systemServer) {
+    public static void hook(@ThisObject Object systemServer) throws Throwable {
 
         if (XposedBridge.disableHooks) {
-            backup(systemServer);
+            SandHook.callOriginByBackup(backup, systemServer);
             return;
         }
 
@@ -73,7 +72,7 @@ public class StartBootstrapServicesHooker implements KeepMembers {
         } catch (Throwable t) {
             logE("error when hooking startBootstrapServices", t);
         } finally {
-            backup(systemServer);
+            SandHook.callOriginByBackup(backup, systemServer);
         }
     }
 
