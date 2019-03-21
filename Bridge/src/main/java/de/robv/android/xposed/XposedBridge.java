@@ -7,9 +7,9 @@ import com.elderdrivers.riru.xposed.Main;
 import com.elderdrivers.riru.xposed.core.HookMain;
 import com.elderdrivers.riru.xposed.dexmaker.DynamicBridge;
 import com.elderdrivers.riru.xposed.dexmaker.MethodInfo;
-import com.elderdrivers.riru.xposed.entry.Router;
 import com.swift.sandhook.xposedcompat.XposedCompat;
 import com.swift.sandhook.xposedcompat.methodgen.SandHookXposedBridge;
+import com.swift.sandhook.xposedcompat.utils.DexLog;
 
 import java.io.File;
 import java.io.IOException;
@@ -127,7 +127,9 @@ public final class XposedBridge {
 	 * @param text The log message.
 	 */
 	public synchronized static void log(String text) {
-		Log.i(TAG, text);
+		if (DexLog.DEBUG) {
+			Log.i(TAG, text);
+		}
 	}
 
 	/**
@@ -139,7 +141,9 @@ public final class XposedBridge {
 	 * @param t The Throwable object for the stack trace.
 	 */
 	public synchronized static void log(Throwable t) {
-		Log.e(TAG, Log.getStackTraceString(t));
+		if (DexLog.DEBUG) {
+			Log.e(TAG, Log.getStackTraceString(t));
+		}
 	}
 
 	/**
@@ -409,8 +413,8 @@ public final class XposedBridge {
 			return;
 
 		if (method.getDeclaringClass() == Log.class) {
-		    Log.e("hookMethodNative", "some on hook log!");
-            return;
+		    Log.e("XposedBridge", "some one hook Log!");
+			DexLog.DEBUG = false;
         }
 
 		if (Main.useSandHook && !XposedInit.startsSystemServer) {

@@ -9,7 +9,7 @@ public class DexLog {
 
     public static final String TAG = "SandXposed";
 
-    public static boolean DEBUG = true;
+    public static volatile boolean DEBUG = true;
 
     public static int v(String s) {
         if (DEBUG) {
@@ -29,13 +29,13 @@ public class DexLog {
 
     public static void printMethodHookIn(Member member) {
         if (DEBUG && member != null) {
-            Log.e("SandHook", "method <" + member.toString() + "> hook in");
+            Log.d("SandHook", "method <" + member.toString() + "> hook in");
         }
     }
 
     public static void printCallOriginError(Member member) {
         if (DEBUG && member != null) {
-            Log.e("SandHook", "method <" + member.toString() + "> call origin error!");
+            Log.d("SandHook", "method <" + member.toString() + "> call origin error!");
         }
     }
 
