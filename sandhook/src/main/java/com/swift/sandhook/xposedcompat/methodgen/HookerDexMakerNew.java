@@ -2,25 +2,28 @@ package com.swift.sandhook.xposedcompat.methodgen;
 
 import android.text.TextUtils;
 
+import com.swift.sandhook.SandHook;
+import com.swift.sandhook.wrapper.HookWrapper;
+import com.swift.sandhook.xposedcompat.hookstub.HookStubManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.nio.ByteBuffer;
+import java.util.Map;
+
+import dalvik.system.InMemoryDexClassLoader;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 import external.com.android.dx.Code;
 import external.com.android.dx.DexMaker;
 import external.com.android.dx.FieldId;
 import external.com.android.dx.Local;
 import external.com.android.dx.MethodId;
 import external.com.android.dx.TypeId;
-import com.swift.sandhook.SandHook;
-import com.swift.sandhook.wrapper.HookWrapper;
-import com.swift.sandhook.xposedcompat.hookstub.HookStubManager;
-
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Map;
-
-import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
 
 import static com.swift.sandhook.xposedcompat.utils.DexMakerUtils.MD5;
 import static com.swift.sandhook.xposedcompat.utils.DexMakerUtils.autoBoxIfNecessary;
@@ -172,7 +175,13 @@ public class HookerDexMakerNew implements HookMaker {
             throw new IllegalArgumentException("dexDirPath should not be empty!!!");
         }
         // Create the dex file and load it.
-        loader = mDexMaker.generateAndLoad(mAppClassLoader, new File(mDexDirPath), dexName, true);
+        try {
+            loader = mDexMaker.generateAndLoad(mAppClassLoader, new File(mDexDirPath), dexName, true);
+        } catch (IOException e) {
+            //can not write file
+            byte[] dexBytes = mDexMaker.generate();
+            loader = new InMemoryDexClassLoader(ByteBuffer.wrap(dexBytes), mAppClassLoader);
+        }
         return loadHookerClass(loader, className);
     }
 
