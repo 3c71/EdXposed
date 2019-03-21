@@ -417,7 +417,7 @@ public final class XposedBridge {
 			DexLog.DEBUG = false;
         }
 
-		if (Main.useSandHook && !XposedInit.startsSystemServer) {
+		if (Main.useSandHook) {
 			XposedCompat.hookMethod(method, (AdditionalHookInfo) additionalInfoObj);
 		} else {
 			DynamicBridge.hookMethod(method, (AdditionalHookInfo) additionalInfoObj);
